@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const User = mongoose.model('User');
+const promisify = require('es6-promisify');
 
 exports.loginForm = (req, res) => {
     res.render('login', { title: 'Login'});
@@ -19,7 +21,7 @@ exports.validateRegister = (req, res, next) => {
     });
     req.checkBody('password', 'password cannot be blank!').notEmpty();
     req.checkBody('password-confirm', 'Confirm password cannot be blank!').notEmpty();
-    req.checkBody('password-confrim', 'opps! Your passwords do not match').equals(req.body.password);
+    req.checkBody('password-confirm', 'opps! Your passwords do not match').equals(req.body.password);
 
     const errors = req.validationErrors();
     if (errors) {
@@ -28,4 +30,12 @@ exports.validateRegister = (req, res, next) => {
         return;
     }
     next();
+};
+
+exports.register = async (req, res, next) => {
+    const user = new User({email: req.body.email, name: req.body.name});
+    const register = promisify(User.register, User);
+    await register(user, req.body.password);
+    //res.send(`New user ${req.body.name} added to the DB`);
+    next(); //pass to aitController.login todo
 };
