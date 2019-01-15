@@ -37,5 +37,5 @@ exports.register = async (req, res, next) => {
     const register = promisify(User.register, User);
     await register(user, req.body.password);
     //res.send(`New user ${req.body.name} added to the DB`);
-    next(); //pass to aitController.login todo
+    next(); //pass to authController.login todo
 };
