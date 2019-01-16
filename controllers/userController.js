@@ -39,3 +39,22 @@ exports.register = async (req, res, next) => {
     //res.send(`New user ${req.body.name} added to the DB`);
     next(); //pass to authController.login todo
 };
+
+exports.account = (req, res) => {
+    res.render('account', {title: 'Edit Your Account'});
+};
+
+exports.updateAccount = async (req, res) => {
+    const updates = {
+        name: req.body.name,
+        email: req.body.email
+    };
+
+    const user = await User.findOneAndUpdate(
+        { _id: req.user._id },
+        { $set: updates },
+        { new: true, runValidators: true, context: 'query' }
+    );
+
+    res.redirect('back');
+};
